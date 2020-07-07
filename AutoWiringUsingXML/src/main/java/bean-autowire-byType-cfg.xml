@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 
+         Author  authorObj_1  = new Author();
+     -->
+ <bean id="authorObj_1" class="app.autowiring.byType.demo.Author">
+      <property name="authorName" value="Jhon"></property>
+      <property name="gonels" value="Fiction"></property>
+    </bean>
+    
+  <!-- 
+         Author  authorObj_2  = new Author();
+     
+    
+  <bean id="authorObj_2" class="app.autowiring.byType.demo.Author">
+      <property name="authorName" value="Sam"></property>
+      <property name="gonels" value="Fiction"></property>
+    </bean> 
+    
+    -->
+ <bean id="book" class="app.autowiring.byType.demo.Book" autowire="byType">
+      <property name="bookId" value="1"></property>
+      <property name="version" value="1.0"></property>
+      
+    </bean>
+</beans>
