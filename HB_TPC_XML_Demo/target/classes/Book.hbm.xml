@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 23, 2020 3:38:27 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.app.tpc.model.Book" table="BOOK">
+        <id name="bid" type="java.lang.Integer">
+            <column name="BID" />
+            <generator class="assigned" />
+        </id>
+        <property name="bname" type="java.lang.String">
+            <column name="BNAME" />
+        </property>
+        <property name="bauthor" type="java.lang.String">
+            <column name="BAUTHOR" />
+        </property>
+        <property name="price" type="java.lang.Float">
+            <column name="PRICE" />
+        </property>
+        
+        <union-subclass  name="com.app.tpc.model.ComicBook" table="COMICBOOK"> 
+           <property name="cb_publisher" type="java.lang.String">
+            <column name="COMICBOOK_Publisher" />
+          </property>  
+        </union-subclass>
+        
+           
+        <union-subclass  name="com.app.tpc.model.NovelBook" table="NovelBOOK"> 
+           <property name="genre" type="java.lang.String">
+               <column name="GENRE" />
+          </property>  
+        </union-subclass>
+    </class>
+</hibernate-mapping>
