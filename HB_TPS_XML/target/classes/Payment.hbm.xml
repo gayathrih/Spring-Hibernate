@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 25, 2020 10:31:22 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.app.tps.Payment" table="TPS_PAYMENT">
+        <id name="payId" type="java.lang.Integer">
+            <column name="PAYID" />
+            <generator class="assigned" />
+        </id>
+        
+       
+        
+        <property name="payAmount" type="java.lang.Float">
+            <column name="PAYAMOUNT" />
+        </property>
+        
+    
+        
+        <joined-subclass name="com.app.tps.CardPayment" table="TPS_Card_Pay">
+            <key column="PAYID"></key>
+            <property name="expiryDate" type="java.lang.String"/>
+        </joined-subclass>
+        
+        
+        
+         <joined-subclass name="com.app.tps.CashPayment">
+              <key column="PAYID"></key>
+            <property name="receiptNo" type="java.lang.Integer"/>
+        </joined-subclass>
+     </class>    
+   
+</hibernate-mapping>
