@@ -1,0 +1,378 @@
+cereate form
+  statt page(web.xml - <wel>)
+  <welcome-file-list>
+    <welcome-file>BookForm.html</welcome-file>
+  </welcome-file-list>
+..................................
+ <h2> Book Form App</h2>
+     
+     <form action="">
+     
+         Book ID: <input type="number" name="bid"/><br>
+         Book Name:<input type="text" name="bname"/><br>
+         Book Price:<input type="number" name="bprice"/><br>
+         <input type="submit" value="store"/>
+     </form>
+......................................................
+
+add Objectify jars
+..........................................
+package com.app;
+
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+
+@Entity
+public class Book {
+	@Id
+	  private long bid;
+	
+	 private String bname;
+	 
+	 private float bprice;
+
+	public long getBid() {
+		return bid;
+	}
+
+	public void setBid(long bid) {
+		this.bid = bid;
+	}
+
+	public String getBname() {
+		return bname;
+	}
+
+	public void setBname(String bname) {
+		this.bname = bname;
+	}
+
+	public float getBprice() {
+		return bprice;
+	}
+
+	public void setBprice(float bprice) {
+		this.bprice = bprice;
+	}
+	 
+}
+.......................................
+
+public class ConnectService {
+
+	static {
+		ObjectifyService.factory().register(Book.class);
+		
+	}
+	
+	public static Objectify ofy() {
+		return ObjectifyService.ofy();
+	}
+}
+..................................................................
+
+package com.app;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.apphosting.utils.config.ClientDeployYamlMaker.Request;
+
+public class StoreBookServlet extends HttpServlet {
+
+	
+	  public void doGet(HttpServletRequest req  , HttpServletResponse res) throws IOException{
+		    // get from parameters
+		     long id= Long.parseLong(req.getParameter("bid"));
+		      String name=  req.getParameter("bname");
+		      float price =  Float.parseFloat(req.getParameter("bprice"));
+		      
+		      Book bookObj =  new Book();
+		        bookObj.setBid(id);
+		        bookObj.setBname(name);
+		        bookObj.setBprice(price);
+		        
+		        ConnectService.ofy().save().entity(bookObj).now();
+		        
+		        res.getWriter().print(" Book Stored...!!");
+		        
+		        
+		      
+		    
+		  
+	  }
+}
+.........................................................
+configure servlet in web.xml
+  <filter>
+    <filter-name>ObjectifyFilter</filter-name>
+    <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>ObjectifyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<servlet>
+    <servlet-name>StoreBookServlet</servlet-name>
+    <servlet-class>com.app.StoreBookServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>StoreBookServlet</servlet-name>
+    <url-pattern>/gae_crud_objectifydemo/storebook.do</url-pattern>
+  </servlet-mapping>
+..............................................................................
+ <form action="/gae_crud_objectifydemo/storebook.do">
+........................................................
+
+Add Objectity-5.1.5.jar
+Add  	guava-r05.jar
+ WEB-INF/lib folder
+.....................................
+
+
+  	    Retrieve Data
+
+1.  RerrieveBookForm.html
+ 
+     <form action="/gae_crud_objectifydemo/storebook.do">
+     
+         Book ID: <input type="number" name="bid"/><br>
+       
+         <input type="submit" value="store"/>
+     </form>
+................................................
+2.  Book.java (update- add code)
+@Override
+	public String toString() {
+		return "Book [bid=" + bid + ", bname=" + bname + ", bprice=" + bprice
+				+ "]";
+	}
+.......................................................
+3.package com.app;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.apphosting.utils.config.ClientDeployYamlMaker.Request;
+import com.googlecode.objectify.Key;
+
+public class RetrieveBookServlet extends HttpServlet {
+
+	
+	  public void doGet(HttpServletRequest req  , HttpServletResponse res) throws IOException{
+		    // get from parameters
+		     long id= Long.parseLong(req.getParameter("bid"));
+		     
+		      Key k =  Key.create(Book.class , id);   
+		     
+		        Object obj  =ConnectService.ofy().load().key(k).now();
+		        
+		        res.getWriter().print(obj);
+		        
+		        
+		      
+		    
+		  
+	  }
+}
+.........................................
+4. web.xml (add code)
+
+<servlet>
+    <servlet-name>RetrieveBookServlet</servlet-name>
+    <servlet-class>com.app.RetrieveBookServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>RetrieveBookServlet</servlet-name>
+    <url-pattern>/gae_crud_objectifydemo/retrievebook.do</url-pattern>
+  </servlet-mapping>
+.........................................................
+5.  <form action="/gae_crud_objectifydemo/retrievebook.do">
+.....................................................................
+
+ 		UpdateForm
+1. UpdateBookForm.html
+......................
+2.package com.app;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.apphosting.utils.config.ClientDeployYamlMaker.Request;
+import com.googlecode.objectify.Key;
+
+public class UpdateBookServlet extends HttpServlet {
+
+	
+	  public void doGet(HttpServletRequest req  , HttpServletResponse res) throws IOException{
+		   res.setContentType("text/html");
+		   
+		   PrintWriter pw= res.getWriter(); 
+		  // get from parameters
+		     long id= Long.parseLong(req.getParameter("bid"));
+		     
+		      Key k =  Key.create(Book.class , id);   
+		     
+		        Book bookobj  = (Book)ConnectService.ofy().load().key(k).now();
+		        
+		     
+		        pw.print("<form action=''>");
+		        pw.print(" Book ID: <input type='number' name='bid' value='"+bookobj.getBid()+"'><br>");
+		        pw.print("Book Name: <input type='text' name='bname' value='"+bookobj.getBname()+"'><br>");
+		        pw.print("Book price: <input type='number' name='bprice' value='"+bookobj.getBprice()+"'><br>");
+		        pw.print("<input type='submit' value='Update'><br>");
+		        pw.print("</form>");
+		        
+		        
+		      
+		    
+		  
+	  }
+}
+....................................................................
+3.UpdateBookServlet_2
+package com.app;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.apphosting.utils.config.ClientDeployYamlMaker.Request;
+import com.googlecode.objectify.Key;
+
+public class UpdateBookServlet_2 extends HttpServlet {
+
+	
+	  public void doGet(HttpServletRequest req  , HttpServletResponse res) throws IOException{
+		   res.setContentType("text/html");
+		   
+		   PrintWriter pw= res.getWriter(); 
+		   // get from parameters
+		     long uid= Long.parseLong(req.getParameter("bookid"));
+		      String uname=  req.getParameter("bookname");
+		      float uprice =  Float.parseFloat(req.getParameter("bookprice"));
+		      
+		      Book bookObj =  new Book();
+		        bookObj.setBid(uid);
+		        bookObj.setBname(uname);
+		        bookObj.setBprice(uprice);
+		        
+		        ConnectService.ofy().save().entity(bookObj).now();
+		        
+		        res.getWriter().print(" Book Updated...!!");
+		        
+		        
+		      
+		    
+		  
+	  }
+}
+....................................................
+4.web.xml
+ <servlet>
+    <servlet-name>UpdateBookServlet</servlet-name>
+    <servlet-class>com.app.UpdateBookServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UpdateBookServlet</servlet-name>
+    <url-pattern>/gae_crud_objectifydemo/updatebook.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>UpdateBookServlet_2</servlet-name>
+    <servlet-class>UpdateBookServlet_2</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UpdateBookServlet_2</servlet-name>
+    <url-pattern>/gae_crud_objectifydemo/updatebook_2.do</url-pattern>
+  </servlet-mapping>
+  .....................................................
+5.
+ <form action="/gae_crud_objectifydemo/updatebook.do">
+     
+         Book ID: <input type="number" name="bid"/><br>
+       
+         <input type="submit" value="retrieve"/>
+     </form>
+
+
+ pw.print("<form action='/gae_crud_objectifydemo/updatebook_2.do'>");
+		        pw.print(" Book ID: <input type='number' name='bookid' value='"+bookobj.getBid()+"'><br>");
+		        pw.print("Enter Update Book Name: <input type='text' name='bookname' value='"+bookobj.getBname()+"'><br>");
+		        pw.print("Enter Update Book price: <input type='number' name='bookprice' value='"+bookobj.getBprice()+"'><br>");
+		        pw.print("<input type='submit' value='Update'><br>");
+		        pw.print("</form>");
+..............................................................................
+             Remove Book
+
+1. RemoveBookForm.html
+<form action="">
+     
+         Book ID: <input type="number" name="bid"/><br>
+       
+         <input type="submit" value="retrieve"/>
+     </form>
+....................................
+ 2. RemoveServlet.java
+package com.app;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.apphosting.utils.config.ClientDeployYamlMaker.Request;
+import com.googlecode.objectify.Key;
+
+public class RemoveBookServlet extends HttpServlet {
+
+	
+	  public void doGet(HttpServletRequest req  , HttpServletResponse res) throws IOException{
+		    // get from parameters
+		     long id= Long.parseLong(req.getParameter("bid"));
+		     
+		      Key k =  Key.create(Book.class , id);   
+		     
+		        Object obj  =ConnectService.ofy().delete().key(k).now();
+		        
+		        res.getWriter().print(obj+" Deleted...!!!");
+		        
+		        
+		      
+		    
+		  
+	  }
+}
+................................
+3. web,.xml
+<servlet>
+    <servlet-name>RemoveBookServlet</servlet-name>
+    <servlet-class>com.app.RemoveBookServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>RemoveBookServlet</servlet-name>
+    <url-pattern>/gae_crud_objectifydemo/removebook.do</url-pattern>
+  </servlet-mapping>
+...............................
+4. <form action="/gae_crud_objectifydemo/removebook.do">
+
