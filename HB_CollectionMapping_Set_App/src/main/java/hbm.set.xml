@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 23, 2020 3:38:27 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.app.model.Product" table="Product_table">
+        <id name="prodId" type="java.lang.Integer">
+            <column name="ProdID" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="prodName" type="java.lang.String">
+            <column name="ProdNAME" />
+        </property>
+        
+       
+     </class>
+     
+    
+     <class name="com.app.model.Customer" table="Customer_table">
+        <id name="custId" type="java.lang.Integer">
+            <column name="CustID" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="custName" type="java.lang.String">
+            <column name="custNAME" />
+        </property>
+        
+        <set name="prodSet">
+             <key>
+                 <column name="custId"></column>
+             </key>
+             
+              
+             <one-to-many class="com.app.model.Product"/>
+         </set>
+       
+     </class>
+     
+    
+    
+  </hibernate-mapping>
